@@ -1,0 +1,58 @@
+{
+  "total_tools": 2500,
+  "total_categories": 89,
+  "avg_upvotes": 245.7,
+  "median_upvotes": 180.0,
+  "max_upvotes": 15420,
+  "top_categories": [
+    { "name": "Productivity", "count": 342 },
+    { "name": "Writing", "count": 298 },
+    { "name": "Design", "count": 267 },
+    { "name": "Marketing", "count": 234 },
+    { "name": "Development", "count": 198 },
+    { "name": "Business", "count": 176 },
+    { "name": "Education", "count": 145 },
+    { "name": "Content Creation", "count": 132 },
+    { "name": "Analytics", "count": 118 },
+    { "name": "For Fun", "count": 95 }
+  ],
+  "top_tools": [
+    {
+      "name": "ChatGPT",
+      "category": "Productivity",
+      "upvotes": 15420,
+      "url": "https://chat.openai.com",
+      "image": "/placeholder.svg?height=200&width=300"
+    },
+    {
+      "name": "Midjourney",
+      "category": "Design",
+      "upvotes": 12890,
+      "url": "https://midjourney.com",
+      "image": "/placeholder.svg?height=200&width=300"
+    },
+    {
+      "name": "Notion AI",
+      "category": "Productivity",
+      "upvotes": 9876,
+      "url": "https://notion.so",
+      "image": "/placeholder.svg?height=200&width=300"
+    }
+  ],
+  "category_distribution": [
+    { "category": "Productivity", "count": 342, "percentage": 13.7 },
+    { "category": "Writing", "count": 298, "percentage": 11.9 },
+    { "category": "Design", "count": 267, "percentage": 10.7 },
+    { "category": "Marketing", "count": 234, "percentage": 9.4 },
+    { "category": "Development", "count": 198, "percentage": 7.9 },
+    { "category": "Business", "count": 176, "percentage": 7.0 },
+    { "category": "Education", "count": 145, "percentage": 5.8 },
+    { "category": "Content Creation", "count": 132, "percentage": 5.3 }
+  ],
+  "data_quality": {
+    "missing_urls": 45,
+    "missing_images": 234,
+    "missing_descriptions": 12,
+    "duplicates": 8
+  }
+}
