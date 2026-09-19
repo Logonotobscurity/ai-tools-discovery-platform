@@ -1,3 +1,4 @@
+import { PAN_AFRICAN_COUNTRY_PROFILES, COUNTRY_PROFILE_BY_NAME, type CountryProfile } from "@/lib/panAfricanCountryProfiles"
 import {
   computeExpansionComposite,
   dedupeKey,
@@ -145,6 +146,65 @@ export function buildExpansionQueue(signals: ExpansionSignal[]): ScoredExpansion
     })
     .map(scoreExpansionSignal)
     .sort((a, b) => b.compositeScore - a.compositeScore)
+}
+
+export interface CountryRadarItem {
+  country: string
+  region: string
+  signalCount: number
+  highConstraints: number
+  topConstraintTypes: string[]
+  authorityAnchors: string[]
+  verificationTracks: string[]
+}
+
+export function buildCountryRadar(queue: ScoredExpansionSignal[]): CountryRadarItem[] {
+  const byCountry = new Map<string, ScoredExpansionSignal[]>()
+
+  for (const item of queue) {
+    for (const market of item.signal.markets.filter((entry) => entry.role === "target")) {
+      const key = market.country.toLowerCase()
+      const existing = byCountry.get(key) ?? []
+      existing.push(item)
+      byCountry.set(key, existing)
+    }
+  }
+
+  return [...byCountry.entries()]
+    .map(([key, items]) => {
+      const profile: CountryProfile =
+        COUNTRY_PROFILE_BY_NAME.get(key) ??
+        PAN_AFRICAN_COUNTRY_PROFILES.find((item) => item.name.toLowerCase().includes(key)) ?? {
+          iso2: "XX",
+          name: items[0]?.signal.markets.find((market) => market.role === "target")?.country ?? key,
+          region: "Unknown",
+          authorityAnchors: [],
+          verificationTracks: [],
+        }
+
+      const constraints = items.flatMap((item) =>
+        item.signal.constraints.filter(
+          (constraint) => constraint.country.toLowerCase() === key,
+        ),
+      )
+
+      const topConstraintTypes = [...new Set(
+        [...constraints]
+          .sort((a, b) => severityValue[b.severity] - severityValue[a.severity])
+          .map((constraint) => constraint.type),
+      )].slice(0, 3)
+
+      return {
+        country: profile.name,
+        region: profile.region,
+        signalCount: items.length,
+        highConstraints: constraints.filter((constraint) => constraint.severity === "high").length,
+        topConstraintTypes,
+        authorityAnchors: profile.authorityAnchors,
+        verificationTracks: profile.verificationTracks,
+      }
+    })
+    .sort((a, b) => b.signalCount - a.signalCount || b.highConstraints - a.highConstraints)
 }
 
 export function buildExpansionSummary(queue: ScoredExpansionSignal[]) {
