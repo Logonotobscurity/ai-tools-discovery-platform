@@ -88,13 +88,19 @@ async function countryId(countryName: string): Promise<string> {
   return row.id
 }
 
+async function optionalCountryId(countryName?: string): Promise<string | null> {
+  if (!countryName) return null
+  if (!COUNTRY_PROFILE_BY_NAME.has(countryName.trim().toLowerCase())) return null
+  return countryId(countryName)
+}
+
 async function entityId(
   name: string,
   entityType: string,
   country?: string,
   metadata: Record<string, unknown> = {},
 ): Promise<string> {
-  const resolvedCountryId = country ? await countryId(country) : null
+  const resolvedCountryId = await optionalCountryId(country)
   const row = await upsert<SupabaseRow>(
     "expansion_entities",
     {
@@ -229,7 +235,7 @@ async function persistOne(signal: ExpansionSignal) {
       from_entity_id: company,
       to_entity_id: relatedEntity,
       relationship_type: relationship.relationshipType,
-      country_id: relationship.country ? await countryId(relationship.country) : null,
+      country_id: await optionalCountryId(relationship.country),
       source_evidence: {
         source: relationship.source ?? null,
         contactUrl: relationship.contactUrl ?? null,
