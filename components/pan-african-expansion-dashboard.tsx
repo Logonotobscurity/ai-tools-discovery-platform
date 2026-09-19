@@ -4,7 +4,7 @@ import Link from "next/link"
 import { useMemo, useState } from "react"
 import { ArrowUpRight, Building2, ChevronDown, CircleAlert, Globe2, Handshake, ShieldCheck, WalletCards } from "lucide-react"
 import type { ScoredExpansionSignal } from "@/lib/panAfricanExpansionService"
-import { buildExpansionSummary } from "@/lib/panAfricanExpansionService"
+import { buildCountryRadar, buildExpansionSummary } from "@/lib/panAfricanExpansionService"
 
 type Filter = "all" | "Nigeria" | "Kenya" | "Uganda" | "Rwanda" | "DRC" | "South Africa" | "Côte d'Ivoire"
 
@@ -22,6 +22,7 @@ export function PanAfricanExpansionDashboard({
   const [expanded, setExpanded] = useState<string | null>(null)
 
   const summary = useMemo(() => buildExpansionSummary(queue), [queue])
+  const countryRadar = useMemo(() => buildCountryRadar(queue), [queue])
   const visible = useMemo(() => {
     if (filter === "all") return queue
     return queue.filter((item) =>
@@ -87,6 +88,49 @@ export function PanAfricanExpansionDashboard({
               </button>
             ),
           )}
+        </section>
+
+        <section className="space-y-4">
+          <div>
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-semibold text-slate-950">Country radar</h2>
+                <p className="mt-1 text-sm text-slate-600">What the signal set says to verify locally before outreach or implementation.</p>
+              </div>
+              <span className="text-xs text-slate-500">{countryRadar.length} target markets</span>
+            </div>
+            <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {countryRadar.map((country) => (
+                <div key={country.country} className="rounded-2xl border bg-white p-5 shadow-sm">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <div className="text-sm font-semibold text-slate-950">{country.country}</div>
+                      <div className="text-xs text-slate-500">{country.region}</div>
+                    </div>
+                    <div className="rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700">
+                      {country.signalCount} signal{country.signalCount === 1 ? "" : "s"}
+                    </div>
+                  </div>
+                  <div className="mt-4 flex flex-wrap gap-1.5">
+                    {country.authorityAnchors.slice(0, 4).map((anchor) => (
+                      <span key={anchor} className="rounded-full bg-slate-50 px-2 py-1 text-[11px] text-slate-600">
+                        {anchor}
+                      </span>
+                    ))}
+                  </div>
+                  {country.topConstraintTypes.length > 0 && (
+                    <div className="mt-4">
+                      <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Current verification flags</div>
+                      <div className="mt-1 text-sm text-slate-700">{country.topConstraintTypes.join(" · ")}</div>
+                    </div>
+                  )}
+                  <div className="mt-4 border-t pt-3 text-xs leading-5 text-slate-500">
+                    Verify: {country.verificationTracks.join(" · ")}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </section>
 
         <section className="space-y-4">
