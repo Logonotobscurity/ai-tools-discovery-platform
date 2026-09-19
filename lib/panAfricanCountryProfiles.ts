@@ -1,5 +1,6 @@
 export interface CountryProfile {
   iso2: string
+  iso3: string
   name: string
   region: string
   authorityAnchors: string[]
@@ -9,6 +10,7 @@ export interface CountryProfile {
 export const PAN_AFRICAN_COUNTRY_PROFILES: CountryProfile[] = [
   {
     iso2: "NG",
+    iso3: "NGA",
     name: "Nigeria",
     region: "West Africa",
     authorityAnchors: ["CBN", "NDPC", "CAC", "PAPSS"],
@@ -16,6 +18,7 @@ export const PAN_AFRICAN_COUNTRY_PROFILES: CountryProfile[] = [
   },
   {
     iso2: "KE",
+    iso3: "KEN",
     name: "Kenya",
     region: "East Africa",
     authorityAnchors: ["CBK", "ODPC", "EAC"],
@@ -23,6 +26,7 @@ export const PAN_AFRICAN_COUNTRY_PROFILES: CountryProfile[] = [
   },
   {
     iso2: "GH",
+    iso3: "GHA",
     name: "Ghana",
     region: "West Africa",
     authorityAnchors: ["Bank of Ghana", "Data Protection Commission", "GIPC", "GhIPSS"],
@@ -30,6 +34,7 @@ export const PAN_AFRICAN_COUNTRY_PROFILES: CountryProfile[] = [
   },
   {
     iso2: "RW",
+    iso3: "RWA",
     name: "Rwanda",
     region: "East Africa",
     authorityAnchors: ["BNR", "RDB", "Rwanda Revenue Authority", "EAC"],
@@ -37,6 +42,7 @@ export const PAN_AFRICAN_COUNTRY_PROFILES: CountryProfile[] = [
   },
   {
     iso2: "UG",
+    iso3: "UGA",
     name: "Uganda",
     region: "East Africa",
     authorityAnchors: ["Bank of Uganda", "Personal Data Protection Office", "URSB", "EAC"],
@@ -44,6 +50,7 @@ export const PAN_AFRICAN_COUNTRY_PROFILES: CountryProfile[] = [
   },
   {
     iso2: "TZ",
+    iso3: "TZA",
     name: "Tanzania",
     region: "East Africa",
     authorityAnchors: ["Bank of Tanzania", "Personal Data Protection Commission", "TRA", "EAC"],
@@ -51,6 +58,7 @@ export const PAN_AFRICAN_COUNTRY_PROFILES: CountryProfile[] = [
   },
   {
     iso2: "ZA",
+    iso3: "ZAF",
     name: "South Africa",
     region: "Southern Africa",
     authorityAnchors: ["SARB", "Information Regulator", "FSCA"],
@@ -58,6 +66,7 @@ export const PAN_AFRICAN_COUNTRY_PROFILES: CountryProfile[] = [
   },
   {
     iso2: "EG",
+    iso3: "EGY",
     name: "Egypt",
     region: "North Africa",
     authorityAnchors: ["Central Bank of Egypt", "GAFI", "ITIDA"],
@@ -65,6 +74,7 @@ export const PAN_AFRICAN_COUNTRY_PROFILES: CountryProfile[] = [
   },
   {
     iso2: "MA",
+    iso3: "MAR",
     name: "Morocco",
     region: "North Africa",
     authorityAnchors: ["Bank Al-Maghrib", "Ministry of Digital Transition", "Tamwilcom"],
@@ -72,13 +82,23 @@ export const PAN_AFRICAN_COUNTRY_PROFILES: CountryProfile[] = [
   },
   {
     iso2: "ET",
+    iso3: "ETH",
     name: "Ethiopia",
     region: "East Africa",
     authorityAnchors: ["National Bank of Ethiopia", "Ethio telecom", "licensed payment operators"],
     verificationTracks: ["payment licensing", "telecom/payment ecosystem", "local-language support", "foreign entry"],
   },
   {
+    iso2: "CI",
+    iso3: "CIV",
+    name: "Côte d'Ivoire",
+    region: "West Africa",
+    authorityAnchors: ["BCEAO", "CNDP", "CEPICI", "PAPSS"],
+    verificationTracks: ["payments", "data protection", "entity/tax", "French-language support"],
+  },
+  {
     iso2: "CD",
+    iso3: "COD",
     name: "Democratic Republic of the Congo",
     region: "Central Africa",
     authorityAnchors: ["Banque Centrale du Congo", "national payment ecosystem"],
