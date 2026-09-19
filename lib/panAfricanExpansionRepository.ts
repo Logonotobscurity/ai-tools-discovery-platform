@@ -278,6 +278,14 @@ async function persistOne(signal: ExpansionSignal) {
     { table: "expansion_opportunities", rows: opportunityRows },
   ])
 
+  if (relationshipRows.length) {
+    await supabaseRequest("expansion_relationships", {
+      method: "POST",
+      headers: { Prefer: "resolution=merge-duplicates,return=minimal" },
+      body: JSON.stringify(relationshipRows),
+    })
+  }
+
   return storedSignal.id
 }
 
