@@ -60,16 +60,16 @@ export function PanAfricanExpansionDashboard({
       <main className="container mx-auto space-y-8 px-4 py-8">
         <section className="grid grid-cols-2 gap-4 md:grid-cols-5">
           {[
-            ["Signals", summary.signals, Globe2],
-            ["Target markets", summary.targetMarkets, Building2],
-            ["High constraints", summary.highConstraints, CircleAlert],
-            ["Contactable", summary.contactableSignals, Handshake],
-            ["Avg. queue score", summary.averageScore, ShieldCheck],
-          ].map(([label, value, Icon]) => (
-            <div key={String(label)} className="rounded-2xl border bg-white p-5 shadow-sm">
+            { label: "Signals", value: summary.signals, icon: Globe2 },
+            { label: "Target markets", value: summary.targetMarkets, icon: Building2 },
+            { label: "High constraints", value: summary.highConstraints, icon: CircleAlert },
+            { label: "Contactable", value: summary.contactableSignals, icon: Handshake },
+            { label: "Avg. queue score", value: summary.averageScore, icon: ShieldCheck },
+          ].map(({ label, value, icon: Icon }) => (
+            <div key={label} className="rounded-2xl border bg-white p-5 shadow-sm">
               <Icon className="h-5 w-5 text-purple-600" />
-              <div className="mt-4 text-2xl font-semibold text-slate-950">{String(value)}</div>
-              <div className="text-xs text-slate-500">{String(label)}</div>
+              <div className="mt-4 text-2xl font-semibold text-slate-950">{value}</div>
+              <div className="text-xs text-slate-500">{label}</div>
             </div>
           ))}
         </section>
