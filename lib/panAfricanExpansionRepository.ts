@@ -1,6 +1,6 @@
 import { COUNTRY_PROFILE_BY_NAME } from "@/lib/panAfricanCountryProfiles"
 import { buildExpansionQueue } from "@/lib/panAfricanExpansionService"
-import type { ExpansionSignal } from "@/lib/panAfricanExpansionIntelligence"
+import { validateSignal, type ExpansionSignal } from "@/lib/panAfricanExpansionIntelligence"
 
 interface SupabaseRow {
   id: string
@@ -302,4 +302,22 @@ export async function persistExpansionSignals(signals: ExpansionSignal[]) {
   }
 
   return results
+}
+
+
+export async function loadPersistedExpansionSignals(limit = 100): Promise<ExpansionSignal[]> {
+  if (!isExpansionPersistenceConfigured()) return []
+
+  const rows = await supabaseRequest<Array<{ raw_payload?: unknown }>>(
+    `expansion_signals?select=raw_payload&order=last_material_update_at.desc&limit=${Math.min(Math.max(limit, 1), 200)}`,
+  )
+
+  const signals: ExpansionSignal[] = []
+  for (const row of rows ?? []) {
+    if (!row.raw_payload || typeof row.raw_payload !== "object") continue
+    const candidate = row.raw_payload as ExpansionSignal
+    if (validateSignal(candidate).length === 0) signals.push(candidate)
+  }
+
+  return signals
 }
