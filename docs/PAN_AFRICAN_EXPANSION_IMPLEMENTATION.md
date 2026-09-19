@@ -8,10 +8,11 @@ Status: feature branch / PR #2
 |---|---|
 | `/pan-african` | Operator dashboard for expansion signals, country radar, evidence, constraints and referral paths |
 | `GET /api/pan-african` | Returns the normalized fixture queue for development/demo validation |
-| `POST /api/pan-african` | Ingestion boundary for the opportunity scanner |
+| `POST /api/pan-african` | Ingestion boundary for the opportunity scanner; persists accepted signals |
 | `EXPANSION_INGEST_SECRET` | Bearer secret protecting ingestion |
 | `lib/panAfricanExpansionIntelligence.ts` | Canonical types, evidence checks, scoring and stable dedupe |
 | `lib/panAfricanExpansionService.ts` | Queue construction, opportunity translation and country radar |
+| `lib/panAfricanExpansionRepository.ts` | Server-side Supabase/Postgres persistence and read adapter |
 | `lib/panAfricanCountryProfiles.ts` | Country verification anchors and research tracks |
 | `database/pan_african_expansion.sql` | PostgreSQL/Supabase persistence model |
 
@@ -73,4 +74,6 @@ These fixtures are for evaluation and UI verification. They are not a permanent 
 
 ## Production gap after PR #2
 
-The application still needs a persistence adapter wired to the Supabase/PostgreSQL schema and a scanner transport that actually POSTs normalized signals. The current PR deliberately stops at the verified application boundary rather than pretending those external runtime connections already exist.
+The application persistence path is now implemented. Set the three environment variables from `.env.example`, apply `database/pan_african_expansion.sql`, and the ingestion endpoint will upsert canonical signals, child records and LOG_ON opportunities; the dashboard will read persisted signal payloads when available.
+
+The remaining external connection is the outbound transport from the scheduled opportunity scanner into this protected endpoint. The automation now emits the same field contract, but the automation runtime does not itself perform arbitrary HTTP POSTs. A future connector/webhook layer should call the endpoint rather than duplicating the intelligence model.
