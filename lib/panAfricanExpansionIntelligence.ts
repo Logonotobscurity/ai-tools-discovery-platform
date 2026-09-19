@@ -153,30 +153,68 @@ export function evidenceConfidence(evidence: EvidenceRecord[]): number {
   return clamp(strongest + Math.min(10, verifiedMaterialClaims * 2));
 }
 
-export function dedupeKey(signal: Pick<ExpansionSignal, 'company' | 'signalType' | 'markets' | 'lastMaterialUpdateAt'>): string {
+export function stableSignalKey(signal: Pick<ExpansionSignal, 'company' | 'signalType' | 'markets'>): string {
   const targets = signal.markets
     .filter((m) => m.role === 'target')
-    .map((m) => m.country.toLowerCase())
+    .map((m) => m.country.trim().toLowerCase())
     .sort()
     .join(',');
 
   return [
     signal.company.name.trim().toLowerCase(),
     signal.signalType,
-    targets,
-    signal.lastMaterialUpdateAt ?? '',
+    targets || 'unspecified-target',
   ].join('|');
+}
+
+export function signalVersionKey(
+  signal: Pick<ExpansionSignal, 'company' | 'signalType' | 'markets' | 'lastMaterialUpdateAt'>,
+): string {
+  return [
+    stableSignalKey(signal),
+    signal.lastMaterialUpdateAt ?? 'unknown-update',
+  ].join('|');
+}
+
+/**
+ * Stable key for persistent deduplication. Material updates should update the
+ * existing signal record rather than create a second active queue item.
+ */
+export function dedupeKey(signal: Pick<ExpansionSignal, 'company' | 'signalType' | 'markets'>): string {
+  return stableSignalKey(signal);
 }
 
 export function validateSignal(signal: ExpansionSignal): string[] {
   const errors: string[] = [];
-  if (!signal.signalId) errors.push('signalId is required');
-  if (!signal.company.name) errors.push('company.name is required');
-  if (!signal.signalType) errors.push('signalType is required');
-  if (!signal.whatChanged) errors.push('whatChanged is required');
-  if (signal.evidence.length === 0) errors.push('at least one evidence record is required');
+  const candidate = signal as Partial<ExpansionSignal> | null;
 
-  for (const evidence of signal.evidence) {
+  if (!candidate || typeof candidate !== 'object') {
+    return ['signal must be a JSON object'];
+  }
+  if (!candidate.signalId) errors.push('signalId is required');
+  if (!candidate.company || typeof candidate.company !== 'object' || !candidate.company.name) {
+    errors.push('company.name is required');
+  }
+  if (!candidate.signalType) errors.push('signalType is required');
+  if (!candidate.markets || !Array.isArray(candidate.markets) || candidate.markets.length === 0) {
+    errors.push('at least one market reference is required');
+  }
+  if (!candidate.whatChanged) errors.push('whatChanged is required');
+  if (!candidate.evidence || !Array.isArray(candidate.evidence) || candidate.evidence.length === 0) {
+    errors.push('at least one evidence record is required');
+  }
+  if (!candidate.relationships || !Array.isArray(candidate.relationships)) {
+    errors.push('relationships must be an array');
+  }
+  if (!candidate.constraints || !Array.isArray(candidate.constraints)) {
+    errors.push('constraints must be an array');
+  }
+
+  for (const evidence of candidate.evidence ?? []) {
+    if (!evidence || typeof evidence !== 'object') {
+      errors.push('evidence records must be objects');
+      continue;
+    }
     if (!evidence.url) errors.push('evidence.url is required');
     if (evidence.sourceType === 'regulator' && evidence.reliability < 80) {
       errors.push(`regulatory evidence has unexpectedly low reliability: ${evidence.url}`);
