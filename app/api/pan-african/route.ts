@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server"
 import { buildExpansionQueue } from "@/lib/panAfricanExpansionService"
 import { PAN_AFRICAN_TEST_SIGNALS } from "@/lib/panAfricanExpansionFixtures"
+import {
+  isExpansionPersistenceConfigured,
+  persistExpansionSignals,
+} from "@/lib/panAfricanExpansionRepository"
 import { validateSignal, type ExpansionSignal } from "@/lib/panAfricanExpansionIntelligence"
 
 export const dynamic = "force-dynamic"
@@ -14,8 +18,9 @@ function authorised(request: Request): boolean {
 export async function GET() {
   const queue = buildExpansionQueue(PAN_AFRICAN_TEST_SIGNALS)
   return NextResponse.json({
-    mode: "fixture",
+    mode: isExpansionPersistenceConfigured() ? "fixture+persisted-runtime" : "fixture",
     generatedAt: new Date().toISOString(),
+    persistenceConfigured: isExpansionPersistenceConfigured(),
     signals: queue,
   })
 }
@@ -54,8 +59,24 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Validation failed.", rejected }, { status: 422 })
   }
 
-  return NextResponse.json({
-    accepted: signals.length,
-    queue: buildExpansionQueue(signals),
-  })
+  let persistence
+  try {
+    persistence = await persistExpansionSignals(signals)
+  } catch (error) {
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Persistence configuration error." },
+      { status: 503 },
+    )
+  }
+
+  const failed = persistence.filter((item) => item.status === "failed")
+  return NextResponse.json(
+    {
+      accepted: signals.length - failed.length,
+      failed: failed.length,
+      persistence,
+      queue: buildExpansionQueue(signals),
+    },
+    { status: failed.length ? 207 : 200 },
+  )
 }
