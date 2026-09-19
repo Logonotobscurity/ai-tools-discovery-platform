@@ -15,8 +15,10 @@ function normaliseCountry(country: string) {
 
 export function PanAfricanExpansionDashboard({
   queue,
+  dataSource,
 }: {
   queue: ScoredExpansionSignal[]
+  dataSource: string
 }) {
   const [filter, setFilter] = useState<Filter>("all")
   const [expanded, setExpanded] = useState<string | null>(null)
@@ -44,9 +46,14 @@ export function PanAfricanExpansionDashboard({
             <h1 className="mt-2 font-playfair text-3xl font-bold text-slate-950 md:text-4xl">
               Pan-African Expansion Watch
             </h1>
-            <p className="mt-1 max-w-2xl text-sm text-slate-600">
-              Signal → evidence → country → constraint → partner → LOG_ON service → action.
-            </p>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <p className="max-w-2xl text-sm text-slate-600">
+                Signal → evidence → country → constraint → partner → LOG_ON service → action.
+              </p>
+              <span className="rounded-full border bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-600">
+                {dataSource}
+              </span>
+            </div>
           </div>
           <Link
             href="/dashboard"
