@@ -5,7 +5,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { Search, Menu, X, Zap, Globe2 } from "lucide-react"
+import { Search, Menu, X, Zap } from "lucide-react"
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -27,10 +27,6 @@ export function Header() {
             </Link>
             <Link href="/categories" className="text-sm font-medium hover:text-primary transition-colors">
               Categories
-            </Link>
-            <Link href="/pan-african" className="flex items-center gap-1.5 text-sm font-medium hover:text-primary transition-colors">
-              <Globe2 className="h-4 w-4" />
-              Pan-African Intel
             </Link>
             <Link href="/about" className="text-sm font-medium hover:text-primary transition-colors">
               About
@@ -67,10 +63,6 @@ export function Header() {
               </Link>
               <Link href="/categories" className="text-sm font-medium hover:text-primary transition-colors">
                 Categories
-              </Link>
-              <Link href="/pan-african" className="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors">
-                <Globe2 className="h-4 w-4" />
-                Pan-African Intelligence
               </Link>
               <Link href="/about" className="text-sm font-medium hover:text-primary transition-colors">
                 About
