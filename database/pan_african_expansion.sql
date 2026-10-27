@@ -189,7 +189,5 @@ VALUES
 ('ZA','ZAF','South Africa','Southern Africa'),
 ('EG','EGY','Egypt','North Africa'),
 ('MA','MAR','Morocco','North Africa'),
-('ET','ETH','Ethiopia','East Africa'),
-('CD','COD','Democratic Republic of the Congo','Central Africa'),
-('CI','CIV','Côte d'Ivoire','West Africa')
+('ET','ETH','Ethiopia','East Africa')
 ON CONFLICT (iso2) DO NOTHING;
